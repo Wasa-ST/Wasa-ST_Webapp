@@ -1,0 +1,24 @@
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+
+}
+
+.form-signin {
+    width: 100%;
+    max-width: 450px;
+    padding: 8px;
+    max-height: fit-content;
+}
+
+input {
+    background-color: aqua;
+}
+
+
+body {
+    background-color: rgb(176, 190, 196);
+    padding-top: 70px;
+}

@@ -1,11 +1,17 @@
-from fastapi import APIRouter, Request,Depends,HTTPException,status
+from fastapi import APIRouter, Request, Depends,Form, HTTPException, status
+from typing import Dict
 from fastapi.security import OAuth2PasswordRequestForm
 
 from fastapi.responses import RedirectResponse, HTMLResponse, JSONResponse
-from .utils import is_active,templates
-from .security import get_current_user,oauth2_scheme,create_access_token,create_refresh_token
+from .utils import is_active, templates
+from .security import (
+    get_current_user,
+    oauth2_scheme,
+    create_access_token,
+    create_refresh_token,
+)
 
-from .models import User,UserCreate
+from .models import User, UserCreate
 from .database import users_db
 
 router = APIRouter()
@@ -18,15 +24,13 @@ async def index(request: Request):
 
         try:
             user = get_current_user(token)
-            
-
 
             return templates.TemplateResponse(
                 "index.html",
                 {
                     "request": request,
                     "is_active": is_active,
-                    "user_role": user.get("role"),
+                    "user_type": user.get("user_type"),
                     "username": user.get("username"),
                 },
             )
@@ -35,11 +39,11 @@ async def index(request: Request):
 
             return templates.TemplateResponse(
                 "login.html",
-                {"request": request, "user_role": None, "is_active": is_active},
+                {"request": request, "user_type": None, "is_active": is_active},
             )
 
     return templates.TemplateResponse(
-        "login.html", {"request": request, "user_role": None, "is_active": is_active}
+        "login.html", {"request": request, "user_type": None, "is_active": is_active}
     )
 
 
@@ -55,10 +59,10 @@ def login(
             detail="Incorrect username or password",
         )
     access_token = create_access_token(
-        data={"sub": user["username"], "role": user["role"]}
+        data={"sub": user["username"], "user_type": user["user_type"]}
     )
     refresh_token = create_refresh_token(
-        data={"sub": user["username"], "role": user["role"]}
+        data={"sub": user["username"], "user_type": user["user_type"]}
     )
     response = RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
     response.set_cookie(key="access_token", value=access_token, httponly=True, path="/")
@@ -76,10 +80,8 @@ def login(
 async def login_page(request: Request):
 
     token = request.cookies.get("access_token")
-    
 
     if token:
-        print(get_current_user(token))
         try:
             user = get_current_user(token)
 
@@ -88,7 +90,7 @@ async def login_page(request: Request):
                 {
                     "request": request,
                     "is_active": is_active,
-                    "user_role": user.get("role"),
+                    "user_type": user.get("user_type"),
                 },
             )
 
@@ -96,12 +98,12 @@ async def login_page(request: Request):
 
             return templates.TemplateResponse(
                 "login.html",
-                {"request": request, "user_role": None, "is_active": is_active},
+                {"request": request, "user_type": None, "is_active": is_active},
             )
 
     return templates.TemplateResponse(
         "login.html",
-        {"request": request, "user_role": None, "is_active": is_active},
+        {"request": request, "user_type": None, "is_active": is_active},
     )
 
 
@@ -113,33 +115,108 @@ def logout():
     return response
 
 
-@router.get("/create_hr_user", response_class=HTMLResponse)
-async def create_hr_user(request: Request):
+@router.get("/create_user", response_class=HTMLResponse)
+async def create_user(request: Request):
 
     token = request.cookies.get("access_token")
     token_data = get_current_user(token)
 
-    if token_data["role"] != "admin":
+    if token_data["user_type"] != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized"
         )
     return templates.TemplateResponse(
-        "create_hr_user.html",
-        {"request": request, "user_role": "admin", "is_active": is_active},
+        "create_user.html",
+        {
+            "request": request,
+            "user_type": token_data.get("user_type"),
+            "is_active": is_active,
+        },
     )
 
 
-@router.post("/post_create-hr-user/")
-def post_create_hr_user(user: UserCreate, token: str = Depends(oauth2_scheme)):
+
+
+@router.get("/show_users", response_class=HTMLResponse)
+async def show_users(request: Request):
+
+    token = request.cookies.get("access_token")
+    token_data = get_current_user(token)
+
+    
+
+    if token_data["user_type"] not in ["admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized"
+        )
+    
+
+
+
+    
+    
+    return templates.TemplateResponse(
+        "show_users.html",
+        {
+            "request": request,
+            "user_type": token_data.get("user_type"),
+            "is_active": is_active,
+            "db":users_db
+        },
+    )
+
+
+
+@router.post("/post_create-user/")
+def post_create_user(user: UserCreate, token: str = Depends(oauth2_scheme)):
     token_data = get_current_user(token)
 
     if user.username in users_db:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists"
         )
+    
+
     users_db[user.username] = {
         "username": user.username,
+        "name": user.name,
         "password": user.password,
-        "role": user.role,
+        "user_type": user.user_type,
+        "designation": user.designation,
+        "ticket_no": user.ticket_no,
+        "ward": user.ward,
+        "place_of_posting": user.place_of_posting,
+
+        
     }
+    print(users_db)
     return {"msg": "User created successfully"}
+
+
+@router.get("/edit_users/")
+async def edit_users(request: Request):
+    username = request.query_params.get('username')
+    user_data = users_db.get(username, {})
+
+    token = request.cookies.get("access_token")
+    if token:
+        
+
+        return templates.TemplateResponse(
+            "edit_users.html",
+            {
+                "request": request,
+                "user_data": user_data,  
+                "is_active": is_active,
+                "user_type":get_current_user(token).get("user_type")
+            },
+        )
+
+@router.post("/post_edit_users/")
+async def post_edit_users(data: Dict[str, str], request: Request):
+    select_username = data.get("username")
+    token = data.get("token")
+    current_user = get_current_user(token).get("user_type")
+
+    return JSONResponse(content={"redirect_url": "/edit_users", "username": select_username})
+

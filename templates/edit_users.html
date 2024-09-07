@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="table-responsive" style="text-align: center;">
+    <h4>Current Info</h4><br>
+
+    <table class="table border-dark table-hover table-bordered">
+        <thead class="bg-secondary text-light" style="position: sticky; top: 0; z-index: 999;">
+            <tr>
+                {% for field in ["Name", "Designation", "Ticket No", "Ward", "Place of Posting", "Username", "Password"]
+                %}
+                <th scope="col" style="font-size: 18px; padding: 10px; text-align: center; vertical-align: middle;">
+                    {{ field }}
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="font-size: 16px; padding: 10px; text-align: center; vertical-align: middle;">
+                    {{ user_data.name }}
+                </td>
+                <td style="font-size: 16px; padding: 10px; text-align: center; vertical-align: middle;">
+                    {{ user_data.designation }}
+                </td>
+                <td style="font-size: 16px; padding: 10px; text-align: center; vertical-align: middle;">
+                    {{ user_data.ticket_no }}
+                </td>
+                <td style="font-size: 16px; padding: 10px; text-align: center; vertical-align: middle;">
+                    {{ user_data.ward }}
+                </td>
+                <td style="font-size: 16px; padding: 10px; text-align: center; vertical-align: middle;">
+                    {{ user_data.place_of_posting }}
+                </td>
+                <td style="font-size: 16px; padding: 10px; text-align: center; vertical-align: middle;">
+                    {{ user_data.username }}
+                </td>
+                <td style="font-size: 16px; padding: 10px; text-align: center; vertical-align: middle;">
+                    {{ user_data.password }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="form-container" style="min-height: 50vh; padding: 20px;">
+    <main class="form-signin text-center">
+
+        <form id="create-user-form" class="my-5">
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="name" placeholder="name" name="name" required
+                            value="{{ user_data.name }}">
+                        <label for="name">Name</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="designation" placeholder="designation"
+                            name="designation" required value="{{ user_data.designation }}">
+                        <label for="designation">Designation</label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row g-3 mt-3">
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="ticket_no" placeholder="ticket_no" name="ticket_no"
+                            required value="{{ user_data.ticket_no }}">
+                        <label for="ticket_no">Ticket Number</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="place_of_posting" placeholder="place_of_posting"
+                            name="place_of_posting" required value="{{ user_data.place_of_posting }}">
+                        <label for="place_of_posting">Place of Posting</label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row g-3 mt-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="password" placeholder="password" name="password"
+                            required value="{{ user_data.password }}">
+                        <label for="password">Password</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="confirm_password" placeholder="confirm_password"
+                            name="confirm_password" required value="{{ user_data.password }}">
+                        <label for="confirm_password">Confirm Password</label>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <div class="d-flex justify-content-center gap-3">
+                <button class="btn btn-lg btn-outline-success" type="submit">Change</button>
+                <button class="btn btn-lg btn-outline-danger" type="button" onclick="window.history.back()">Cancel</button>
+            </div>
+
+        </form>
+    </main>
+</div>
+
+{% endblock %}

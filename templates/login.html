@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 
+
+
 <div class="form-container">
     <main class="form-signin text-center ">
         <form id="login-form">
             <img class="mb-4" src="/static/images/logo.png" alt="" width="150" height="150">
+            <br><br>
 
             <div class="form-floating">
                 <input type="text" class="form-control" id="username" placeholder="username" name="username" required>
@@ -23,7 +26,7 @@
         </form>
     </main>
 </div>
-
+</body>
 <script>
     document.getElementById('login-form').addEventListener('submit', async (event) => {
         event.preventDefault();

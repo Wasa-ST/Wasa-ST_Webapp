@@ -1,0 +1,21 @@
+admin -> full access (create account)
+
+director,xen,sdos -> view only
+ddr ,ST computer op --> write , view , (add all accounts)
+
+subdivions -> write,read, own subdivions
+afis -> add own wards accounts only
+RFIS --> add all acounts Own subdivions
+
+
+1 admin
+2 type_A (director,xen,SDOS) View only
+3 DDR_&_ST_Operator (DDR, ST_OP) write,view,(add all accounts)
+4 shadbagh/gujjarpura/mughapura/baghbanpura operator (subdivions OP) write,view Owns Division
+5 R_Ward --> (ward_number) (AFIS) add own wards
+
+
+
+#Sr	Name	Designation	Ticket No	Ward	Place of Posting	
+
+Username	Password	Edit-Info
