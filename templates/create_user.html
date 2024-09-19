@@ -95,9 +95,13 @@
 <script>
     document.getElementById('create-user-form').addEventListener('submit', async (event) => {
         event.preventDefault();
+
         const username = document.getElementById('username').value;
+
         const name = document.getElementById('name').value;
+
         const password = document.getElementById('password').value;
+        
         const confirm_password = document.getElementById('confirm_password').value;
         const user_type = document.getElementById('user_type').value;
 

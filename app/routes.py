@@ -140,6 +140,7 @@ async def create_user(request: Request):
 @router.get("/show_users", response_class=HTMLResponse)
 async def show_users(request: Request):
 
+    
     token = request.cookies.get("access_token")
     token_data = get_current_user(token)
 
@@ -189,7 +190,6 @@ def post_create_user(user: UserCreate, token: str = Depends(oauth2_scheme)):
 
         
     }
-    print(users_db)
     return {"msg": "User created successfully"}
 
 
@@ -220,3 +220,42 @@ async def post_edit_users(data: Dict[str, str], request: Request):
 
     return JSONResponse(content={"redirect_url": "/edit_users", "username": select_username})
 
+
+
+
+@router.get("/post_user/")
+async def post_user(request: Request):
+    username = request.query_params.get('username')
+    user_data = users_db.get(username, {})
+
+    token = request.cookies.get("access_token")
+    if token:
+        
+
+        return templates.TemplateResponse(
+            "edit_users",
+            {
+                "request": request,
+                "user_data": user_data,  
+                "is_active": is_active,
+                "user_type":get_current_user(token).get("user_type")
+            },
+        )
+
+
+@router.post("/post_update_users/")
+async def post_update_users(data: Dict[str, str], request: Request):
+
+    select_username = data.get("username")
+    token = data.get("token")
+    current_user = get_current_user(token).get("user_type")
+
+    if current_user == "admin":
+       for k,v in data.items():
+        if k not in ['username','token']:
+            users_db.get(select_username)[k] = v
+        
+
+    return JSONResponse(content={"redirect_url": "/post_user", "username": select_username}) 
+
+    # return JSONResponse(content={"redirect_url": "/edit_users", "username": select_username})

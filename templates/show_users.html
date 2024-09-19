@@ -5,7 +5,7 @@
 <div class="table-responsive" style="text-align: center;">
     <h1>All Users</h1>
 
-    <table class="table border-dark table-hover table-bordered">
+    <table class="table border-dark table-hover table-bordered ">
         <thead class="bg-secondary text-light" style="position: sticky; top: 0; z-index: 999;">
             <tr>
                 {% for field in ["#Sr", "Name", "Designation", "Ticket No", "Ward", "Place of Posting", "Username", "Password", "Edit-Info"] %}
@@ -22,7 +22,7 @@
                     {{ loop.index }}
                 </th>
                 <td style="font-size: 16px; padding: 10px; text-align: center; vertical-align: middle;">
-                    {{ v.username }}
+                    {{ v.name }}
                 </td>
                 <td style="font-size: 16px; padding: 10px; text-align: center; vertical-align: middle;">
                     {{ v.designation }}
